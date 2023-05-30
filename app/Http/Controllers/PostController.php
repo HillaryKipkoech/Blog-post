@@ -58,9 +58,18 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Post $post)
+    public function edit(Request $request,Post $post):RedirectResponse
     {
-        //
+        $this->authorize('update', $post);
+ 
+        $validated = $request->validate([
+            'message' => 'required|string|max:255',
+        ]);
+ 
+        $post->update($validated);
+ 
+        return redirect(route('posts.index'));
+
     }
 
     /**
@@ -74,8 +83,12 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post)
+    public function destroy(Post $post):RedirectResponse
     {
-        //
+        $this->authorize('delete', $post);
+ 
+        $post->delete();
+ 
+        return redirect(route('posts.index'));
     }
 }
